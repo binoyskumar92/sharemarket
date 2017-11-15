@@ -1,0 +1,298 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <!--<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">-->
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/angular-bootstrap-toggle@0.1.2/dist/angular-bootstrap-toggle.css">
+
+    <!--font-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link href="customstyle.css" rel="stylesheet" />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!--<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>-->
+  
+
+    <!--Moment js-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.1/moment.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.14/moment-timezone.js"></script>
+
+    <!-- Angular material -->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-aria.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-sanitize/1.4.8/angular-sanitize.js"></script>
+    <!--Angular bootstrap toggle-->
+    <script src="https://cdn.jsdelivr.net/npm/angular-bootstrap-toggle@0.1.2/dist/angular-bootstrap-toggle.js"></script>
+
+    <!--Highchart-->
+
+    <script src="https://code.highcharts.com/stock/highstock.js"></script>
+    <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+    <!--User script file-->
+    <script src="script.js"></script>
+</head>
+
+<body ng-app="autocompletemodule" ng-style="{'background-image': 'url(http://cs-server.usc.edu:45678/hw/hw8/images/background.png)','overflow': 'auto'}" ng-cloak>
+    <script>
+        window.fbAsyncInit = function () {
+            FB.init({
+                appId: '745507105640564',
+                autoLogAppEvents: true,
+                xfbml: true,
+                version: 'v2.11'
+            });
+        };
+
+        (function (d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) { return; }
+            js = d.createElement(s); js.id = id;
+            js.src = "https://connect.facebook.net/en_US/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+    </script>
+    <div class="container" ng-controller="autoCompleteController as ctrl">
+
+        <div class="row customdiv" ng-cloak>
+            <div class="col-md-12 center-block" style="text-align:center;margin-bottom:10px;"><b>Stock Market Search</b></div>
+            <div class="col-md-3">
+                <b>Enter Stock Ticker Symbol:*</b>
+            </div>
+            <div class="col-md-6">
+                <!-- <input id="id_symbol" name="symbol" type="text" placeholder="eg.AAPL" class="form-control button-text">-->
+                <form name="autocompleteForm">
+                    <md-autocomplete name="autocompleteField" ng-disabled="ctrl.isDisabled" md-no-cache=false md-selected-item="ctrl.selectedItem" md-search-text-change="ctrl.searchTextChange(ctrl.searchText)"
+                                     md-search-text="ctrl.searchText" md-selected-item-change="ctrl.selectedItemChange(item)" md-items="item in ctrl.querySearch(ctrl.searchText)"
+                                     md-item-text="item.Symbol" required md-input-minlength="1" placeholder="e.g. AAPL">
+
+                        <md-item-template>
+                            <span md-highlight-text="ctrl.searchText" md-highlight-flags="^i">{{item.Symbol}} - {{item.Name}} ({{item.Exchange}})</span>
+                        </md-item-template>
+                        <div ng-messages="autocompleteForm.autocompleteField.$error">
+                            <div ng-message="required">Your entry is not long enough.</div>
+                        </div>
+                    </md-autocomplete>
+                </form>
+            </div>
+            <div class="col-md-3">
+                <button type="button" ng-click="ctrl.getQuote()" class="btn btn-primary" id="id_quote"><span class="glyphicon glyphicon-search"></span> Get Quote</button>
+                <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-refresh"></span> Clear</button>
+            </div>
+            <div class="col-md-3"></div>
+            <div id="id_validationlabel" class="col-md-6 small" style="text-align:left;"></div>
+            <div class="col-md-3"></div>
+        </div>
+
+        <hr />
+        <div class="row customdiv">
+            <div class="col-md-12 paneldiv1" ng-cloak>
+                <div class="panel panel-default" ng-show="ctrl.showFull" ng-class="ctrl.showFull ? 'fullWidth' : 'noWidth'">
+                    <div class="panel-heading clearfix">
+                        <h4 class="panel-title pull-left" style="padding-top: 7.5px;"><p><strong>Favorite list</strong></p></h4>
+                       
+                        <div class="btn-group pull-right">
+                            <div class="btn" style="margin-top: 8px;"><label>Automatic Refresh: </label></div>
+                            <div class="btn"><toggle ng-model="ctrl.toggleValue" ng-change="ctrl.toggleValueChanged()"></toggle></div>
+                            <!--<input id="toggle-event" ng-model="schedule" ng-change='toggleschedule()' type="checkbox" data-toggle="toggle">-->
+                            <button type="button" ng-click="ctrl.manualRefresh()" style="margin-left:5px;margin-top:6px;" class="btn btn-default "><span class="glyphicon glyphicon-refresh"></span>  </button>
+                            <button type="button" style="margin-left:5px;margin-top:6px;" ng-click="ctrl.showFull = !ctrl.showFull" class="btn btn-default "><span class="glyphicon glyphicon-chevron-right"></span> </button>
+                        </div>
+                    </div>
+                    <div class="col-md-6 sortby">
+                        <div class="col-md-3" style="margin-top:8px"><b> Sort by</b></div>
+                        <div class="col-md-3">
+                            <select id="id_Sort" required ng-options='option.value as option.name for option in ctrl.sortOptions' class="btn btn-default dropdown-toggle" ng-model="ctrl.sort.type"></select>
+                        </div>
+                        <div class="col-md-3" style="margin-top:8px;padding-left:70px;"> <b> Order</b></div>
+                        <div class="col-md-3">
+                                <select id="id_Order" ng-disabled="ctrl.sort.type=='default'" required ng-options='option.value as option.name for option in ctrl.orderOptions' class="btn btn-default dropdown-toggle" ng-model="ctrl.order.type">
+                                </select>
+                        </div>
+                     </div>
+
+                    <div class="col-md-12" style="text-align:left"">
+                        <table class="table table-striped">
+                            <tbody>
+                                <tr style="font-weight:800">
+                                    <th>Symbol</th>
+                                    <th>Stock Price</th>
+                                    <th>Change (Change Percent)</th>
+                                    <th>Volume</th>
+                                    <th><a href="" style="display:none" class="btn btn-default"><i class="fa fa-trash-o"></i></a></th>
+                                </tr>
+                                <tr ng-repeat="item in ctrl.afavItemsinStorage | orderBy : ctrl.sort.type : ctrl.order.type =='asc'?false:true">
+                                    <td><a href="" ng-click="$event.preventDefault(); ctrl.symbolLinkClick(item.symbol)"> {{item.symbol}}</a></td>
+                                    <td>{{item.stockprice}}</td>
+                                    <td ng-bind-html="item.change + ' (' + item.changeperc + '%)' + ctrl.addArrow(item.change)" ng-class="item.change<0 ? 'redArrow' : 'greenArrow'"></td>                                  
+                                    <td>{{ctrl.getLocaleString(item.volume)}}</td>
+                                    <th><a href="" ng-click="ctrl.favDelete(item.symbol)" class="btn btn-default"><i class="fa fa-trash-o" aria-hidden="true"></i></a></th>
+                                </tr>
+                               
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 paneldiv2" ng-show="!ctrl.showFull" ng-class="ctrl.showFull ? 'noWidth' : 'fullWidth'">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading clearfix">
+                            <div class="btn-group pull-left">
+                                <button type="button" style="margin-left:5px;" ng-click="ctrl.showFull = !ctrl.showFull" class="btn btn-default "><span class="glyphicon glyphicon-chevron-left"></span> </button>
+                            </div>
+                            <h4 class="panel-title pull-left" style="padding-left: 45%;padding-top: 7.5px;"><p><strong>Stock Details</strong></p></h4>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <ul class="nav nav-pills">
+                        <li class="active"><a data-toggle="pill" class="btn" href="#currstock"><span class="glyphicon glyphicon-dashboard"></span>&nbsp;Current stock</a></li>
+                        <!--<li><a data-toggle="pill" class="btn" ng-href="{{ctrl.link_highstock}}" ng-click="$event.preventDefault(); ctrl.setHighStocks()"><span class="glyphicon glyphicon-stats"></span>&nbsp;Historical Charts</a></li>-->
+                        <li><a data-toggle="pill" class="btn" href="#highstockchart"><span class="glyphicon glyphicon-stats"></span>&nbsp;Historical Charts</a></li>
+                        <li><a data-toggle="pill" class="btn" href="#home3"><span class="glyphicon glyphicon-link"></span>&nbsp;News feed</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-12"><hr></div>
+                <div class="tab-content">
+                    <div id="currstock" class="tab-pane fade in active">
+                        <div class="col-md-6 col-sm-12 col-xs-12">
+                            <h4 class="panel-title pull-left" style="padding-top: 7.5px;padding-bottom: 5%"><strong>Stock details</strong></h4>
+                            <div class="btn-group pull-right">
+                                <a href="" class="btn btn-default" ng-disabled="!ctrl.showPrgStockDetails" ng-click="$event.preventDefault(); ctrl.favButtonClick()"><span id="abc" class="glyphicon glyphicon-star glyphicon-inverse"></span> </a>
+
+                                <a href="" ng-disabled="!ctrl.showPrgIndicator" class="btn btn-default" ng-click="$event.preventDefault(); ctrl.fbShare()">
+                                    <i class="fa fa-facebook-square" style="font-size:23px;color:#3b5998"></i>
+                                </a>
+                            </div>
+                            <br />
+                            <div style="margin-top:10%;" class="progress" ng-show="!ctrl.showPrgStockDetails">
+                                <div class="progress-bar progress-bar-striped active" role="progressbar"
+                                     aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width:50%">
+                                </div>
+                            </div>
+                            <div class="alert alert-danger" ng-show="ctrl.showErrorStockDetails">
+                                Error! Failed to get current stock data.
+                            </div>
+                            <table class="table table-striped" ng-show="ctrl.showPrgStockDetails">
+                                <tbody class="text-left">
+                                    <tr>
+                                        <td><strong>Stock Ticker Symbol</strong></td>
+                                        <td>{{ctrl.Symbol}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Last Price</strong></td>
+                                        <td id="id_lastprice">{{ctrl.LastPrice}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Change (Change Percent)</strong></td>
+                                        <td id="id_changeperc" ng-bind-html="ctrl.Arrow"></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Timestamp</strong></td>
+                                        <td>{{ctrl.sTimeStamp}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Open</strong></td>
+                                        <td>{{ctrl.sOpen}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Previous Close</strong></td>
+                                        <td>{{ctrl.sClose}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Day's Range</strong></td>
+                                        <td>{{ctrl.sDaysRange}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Volume</strong></td>
+                                        <td>{{ctrl.sVolume}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                        <div class="col-md-6 col-sm-12 col-xs-12">
+
+                            <ul id="id_ulindicators" class="nav nav-tabs">
+                                <li class="active" id="id_price"><a data-toggle="tab" ng-href="{{ctrl.link}}" ng-click="$event.preventDefault(); ctrl.setPriceVolumeGraph()">Price</a></li>
+                                <li><a data-toggle="tab" ng-href="{{ctrl.link}}" ng-click="$event.preventDefault(); ctrl.loadIndicatorChart('SMA',1)">SMA</a></li>
+                                <li><a data-toggle="tab" ng-href="{{ctrl.link}}" ng-click="$event.preventDefault(); ctrl.loadIndicatorChart('EMA',1)">EMA</a></li>
+                                <li><a data-toggle="tab" ng-href="{{ctrl.link}}" ng-click="$event.preventDefault(); ctrl.loadIndicatorChart('STOCH',2)">STOCH</a></li>
+                                <li><a data-toggle="tab" ng-href="{{ctrl.link}}" ng-click="$event.preventDefault(); ctrl.loadIndicatorChart('RSI',1)">RSI</a></li>
+                                <li><a data-toggle="tab" ng-href="{{ctrl.link}}" ng-click="$event.preventDefault(); ctrl.loadIndicatorChart('ADX',1)">ADX</a></li>
+                                <li><a data-toggle="tab" ng-href="{{ctrl.link}}" ng-click="$event.preventDefault(); ctrl.loadIndicatorChart('CCI',1)">CCI</a></li>
+                                <li><a data-toggle="tab" ng-href="{{ctrl.link}}" ng-click="$event.preventDefault(); ctrl.loadIndicatorChart('BBANDS',3)">BBANDS</a></li>
+                                <li><a data-toggle="tab" ng-href="{{ctrl.link}}" ng-click="$event.preventDefault(); ctrl.loadIndicatorChart('MACD',3)">MACD</a></li>
+                            </ul>
+                            <br />
+                            <div style="margin-top:10%;" ng-show="!ctrl.showPrgIndicator" class="progress">
+                                <div class="progress-bar progress-bar-striped active" role="progressbar"
+                                     aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width:50%">
+                                </div>
+                            </div>
+                            <div class="alert alert-danger" ng-show="ctrl.showErrorIndicator">
+                                Error! Failed to get news Price data.
+                            </div>
+                            <div class="tab-content" ng-show="ctrl.showPrgIndicator&&!ctrl.showErrorIndicator">
+                                <div id="id_highchartgraph" class="tab-pane fade in active">
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div id="highstockchart" class="tab-pane fade col-md-12">
+                        <div style="margin-top:10%;" class="progress" ng-show="!ctrl.showPrgHighStock">
+                            <div class="progress-bar progress-bar-striped active" role="progressbar"
+                                 aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width:50%">
+                            </div>
+                        </div>
+                        <div class="alert alert-danger" ng-show="ctrl.showErrorHighStock">
+                            Error! Failed to get historical data.
+                        </div>
+                        <div id="highstock" ng-show="ctrl.showPrgHighStock">
+                          
+                        </div>
+                    </div>
+                   
+                    <div id="home3" class="tab-pane fade">
+                      
+                        <div class="col-md-12" style="text-align:left">
+                           
+                            <div style="margin-top:10%;" class="progress" ng-show="!ctrl.showPrgNews">
+                                <div class="progress-bar progress-bar-striped active" role="progressbar"
+                                     aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width:50%">
+                                </div>
+                            </div>
+                            <div class="alert alert-danger" style="text-align:center" ng-show="ctrl.showErrorNews">
+                                Error! Failed to get news feed data.
+                            </div>
+                            <div ng-repeat="o in ctrl.aNewsArr" class="well" ng-show="ctrl.showPrgNews">
+                                <h4><a href={{o[0]}}>{{o[3]}}</a></h4><br>
+                                <b>Date:</b> {{o[2]}}
+                                <br /><br /><b>Author:</b> {{o[1]}}
+                            </div>                      
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
