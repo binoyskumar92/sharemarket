@@ -7,6 +7,27 @@ angular
 function autoCompleteController($timeout, $q, $log) {
  
     self = this;
+    //Jquery
+    //    $(document).ready(function () {
+    //    $('#id_symbol').keydown(function () {
+    //        if (jQuery.trim($('#id_symbol').val()) == ''){
+    //            $('#id_symbol').css('border-color', 'red');
+    //            $("#id_validationlabel")[0].innerHTML = "Please enter a stock ticker symbol.";
+    //        } else {
+    //            $("#id_validationlabel")[0].innerHTML = "";
+    //        }
+    //    });
+    //    $("#id_quote").click(function () {
+    //        if (jQuery.trim($('#id_symbol').val()) == '') {
+    //            $('#id_symbol').css('border-color', 'red !important');
+    //            $("#id_validationlabel")[0].innerHTML = "Please enter a stock ticker symbol.";
+                
+    //        }
+    //        else {
+    //            $('#id_symbol').css('border-color', '');
+    //        }   
+    //    });
+    //});
     self.simulateQuery = true;
     self.isDisabled = false;
     self.afavItemsinStorage = readAllFromStorage();
@@ -57,6 +78,9 @@ function autoCompleteController($timeout, $q, $log) {
     self.setHighStocks = setHighStocks;
     self.favItems = {};
     self.showFull = true;
+    self.showGetQuote = false;
+    self.clearPress = clearPress;
+    self.clearButtonpressed = 
 
     self.showPrgStockDetails = false;
     self.showPrgIndicator = false;
@@ -67,12 +91,20 @@ function autoCompleteController($timeout, $q, $log) {
     self.showErrorIndicator = false;
     self.showErrorHighStock = false;
     self.showErrorNews = false;
-
+    self.showNoProgress = true;
     self.aNewsArr = [];
     aTimeSeries = [];
     aChart = "";
     favClicked = true;
     iTimeInterval = 0;
+
+    function clearPress() {
+        self.clearButtonpressed=true;
+        $("#id_validationlabel")[0].innerHTML = "";
+        self.searchText = "";
+        self.showGetQuote = false;
+        self.showFull = true;
+    }
 
     function manualRefresh() {
         getRefreshedData();
@@ -417,6 +449,22 @@ function autoCompleteController($timeout, $q, $log) {
 
     function searchTextChange(text) {
         //$log.info('Text changed to ' + text);
+        if (text.trim() == ''&&!self.clearButtonpressed) {
+                $('#id_symbol').css('border-color', 'red !important');
+                $("#id_validationlabel")[0].innerHTML = "Please enter a stock ticker symbol.";
+                self.showGetQuote = false;
+
+            }
+        else {      
+            $('#id_symbol').css('border-color', '');
+            $("#id_validationlabel")[0].innerHTML = "";
+            if (self.clearButtonpressed) {
+                self.showGetQuote = false;
+            } else {
+                self.showGetQuote = true;
+            }           
+            self.clearButtonpressed = false;
+            }   
     }
 
     function selectedItemChange(item) {
@@ -539,7 +587,7 @@ function autoCompleteController($timeout, $q, $log) {
                 panKey: 'shift'
             },
             title: {
-                text: self.searchText + ' Stock Price and VoLume'
+                text: self.searchText + ' Stock Price and Volume'
             },
             subtitle: {
                 text: '<a href="https://www.alphavantage.co/" target="_blank" class=>Source : Alpha Vantage</a>',

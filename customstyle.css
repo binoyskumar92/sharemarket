@@ -78,4 +78,8 @@ html, body {
 html {
     overflow: auto;
 }
+md-autocomplete input:not(.md-input) {
+    background: #FFF !important;
+    border-radius: 12px !important;
+}
 
