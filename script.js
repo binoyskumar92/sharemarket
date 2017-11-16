@@ -298,11 +298,11 @@ function autoCompleteController($timeout, $q, $log) {
                                         sLink = oNewsData.rss.channel[0].item[i].link[0];
                                         var aDateParts = oNewsData.rss.channel[0].item[i].pubDate[0].split(' ');
                                         if (aDateParts[5] == "-0400") {
-                                            sDate = moment(aDateParts[4], 'h:mm:ss').subtract('4', 'hours').format('h:mm:ss') + " EDT";
+                                            sDate = moment(aDateParts[4], 'HH:mm:ss').subtract('4', 'hours').format('HH:mm:ss') + " EDT";
                                         } else if (aDateParts[5] == "-0500") {
-                                            sDate = moment(aDateParts[4], 'h:mm:ss').subtract('5', 'hours').format('h:mm:ss') + " EST";
+                                            sDate = moment(aDateParts[4], 'HH:mm:ss').subtract('5', 'hours').format('HH:mm:ss') + " EST";
                                         } else {
-                                            sDate = moment(aDateParts[4], 'h:mm:ss');
+                                            sDate = moment(aDateParts[4], 'HH:mm:ss');
                                         }
                                         sDate = aDateParts[0] + " " + aDateParts[1] + " " +aDateParts[2] + " " + aDateParts[3] + " " + sDate;
                                         sAuthor = !!oNewsData.rss.channel[0].item[i]["sa:author_name"][0] ? oNewsData.rss.channel[0].item[i]["sa:author_name"][0] : "";

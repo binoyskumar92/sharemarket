@@ -113,7 +113,7 @@
                             </div>
                         </div>
                         <div class="panel-body">
-                            <div class="col-md-6 sortby">
+                            <div class="col-md-6 sortby hidden-xs">
                                 <div class="col-md-3 col-xs-6" style="margin-top:8px"><b> Sort by</b></div>
                                 <div class="col-md-3 col-xs-6">
                                     <select id="id_Sort" required ng-options='option.value as option.name for option in ctrl.sortOptions' class="btn btn-default dropdown-toggle" ng-model="ctrl.sort.type"></select>
@@ -125,7 +125,21 @@
                             </div>
                             <div class="col-md-6"></div>
 
-                            <div class="col-md-12" style="text-align:left" ">
+                            <div class="col-md-6 sortby visible-xs">
+                                <div class="col-md-3 col-xs-6" style="margin-top:8px"><b> Sort by</b></div>
+                                <div class="col-md-3 col-xs-6">
+                                    <select id="id_Sort" required ng-options='option.value as option.name for option in ctrl.sortOptions' class="btn btn-default dropdown-toggle" ng-model="ctrl.sort.type"></select>
+                                </div>
+                                <div class="col-md-3 col-xs-6 orderby" style="margin-top:8px;"> <b> Order</b></div>
+                                <div class="col-md-3 col-xs-6">
+                                    <select id="id_Order" ng-disabled="ctrl.sort.type=='default'" required ng-options='option.value as option.name for option in ctrl.orderOptions' class="btn btn-default dropdown-toggle" ng-model="ctrl.order.type"></select>
+                                </div>
+                            </div>
+                            <div class="col-md-6"></div>
+
+
+                           
+                            <div class="col-md-12" style="text-align:left">
                                 <table class="table table-striped">
                                     <tbody>
                                         <tr style="font-weight:800">
@@ -163,16 +177,25 @@
 
 
 
-                        <div class="col-md-12 col-xs-12">
-                            <ul class="nav nav-pills">
+                        <div class="hidden-xs col-xs-12">
+                            <ul class="nav nav-pills small">
                               <li class="active"><a data-toggle="pill" class="btn" href="#currstock"><span class="glyphicon glyphicon-dashboard"></span>&nbsp;Current stock</a></li>
                                 <!--<li><a data-toggle="pill" class="btn" ng-href="{{ctrl.link_highstock}}" ng-click="$event.preventDefault(); ctrl.setHighStocks()"><span class="glyphicon glyphicon-stats"></span>&nbsp;Historical Charts</a></li>-->
                                 <li><a data-toggle="pill" class="btn" href="#highstockchart"><span class="glyphicon glyphicon-stats"></span>&nbsp;Historical Charts</a></li>
                                 <li><a data-toggle="pill" class="btn" href="#home3"><span class="glyphicon glyphicon-link"></span>&nbsp;News feed</a></li>
                             </ul>
                         </div>
+                        <div class="visible-xs col-xs-12">
+                            <ul class="nav nav-pills small">
+                                <li class="active"><a data-toggle="pill" class="btn" href="#currstock"><span class="glyphicon glyphicon-dashboard"></span>&nbsp;Stock</a></li>
+                                <!--<li><a data-toggle="pill" class="btn" ng-href="{{ctrl.link_highstock}}" ng-click="$event.preventDefault(); ctrl.setHighStocks()"><span class="glyphicon glyphicon-stats"></span>&nbsp;Historical Charts</a></li>-->
+                                <li><a data-toggle="pill" class="btn" href="#highstockchart"><span class="glyphicon glyphicon-stats"></span>&nbsp;Charts</a></li>
+                                <li><a data-toggle="pill" class="btn" href="#home3"><span class="glyphicon glyphicon-link"></span>&nbsp;News</a></li>
+                            </ul>
+                        </div>
+                       
                         <div class="col-md-12"><hr></div>
-                        <div class="tab-content">
+                        <div class="tab-content col-md-12">
                             <div id="currstock" class="tab-pane fade in active">
                                 <div class="col-md-6 col-sm-12 col-xs-12">
                                     <h4 class="panel-title pull-left" style="padding-top: 7.5px;padding-bottom: 5%"><strong>Stock details</strong></h4>
@@ -288,7 +311,7 @@
                                     <div class="alert alert-danger" style="text-align:center" ng-show="ctrl.showErrorNews">
                                         Error! Failed to get news feed data.
                                     </div>
-                                    <div ng-repeat="o in ctrl.aNewsArr" class="well" ng-show="ctrl.showPrgNews">
+                                    <div ng-repeat="o in ctrl.aNewsArr" class="well col-md-12" ng-show="ctrl.showPrgNews">
                                         <h4><a href={{o[0]}}>{{o[3]}}</a></h4><br>
                                         <b>Date:</b> {{o[2]}}
                                         <br /><br /><b>Author:</b> {{o[1]}}
