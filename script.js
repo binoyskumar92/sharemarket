@@ -80,7 +80,9 @@ function autoCompleteController($timeout, $q, $log) {
     self.showFull = true;
     self.showGetQuote = false;
     self.clearPress = clearPress;
-    self.clearButtonpressed = 
+    self.clearButtonpressed = false;
+    self.disableRightButton = true;
+
 
     self.showPrgStockDetails = false;
     self.showPrgIndicator = false;
@@ -91,7 +93,7 @@ function autoCompleteController($timeout, $q, $log) {
     self.showErrorIndicator = false;
     self.showErrorHighStock = false;
     self.showErrorNews = false;
-    self.showNoProgress = true;
+    self.showProgress = true;
     self.aNewsArr = [];
     aTimeSeries = [];
     aChart = "";
@@ -104,6 +106,8 @@ function autoCompleteController($timeout, $q, $log) {
         self.searchText = "";
         self.showGetQuote = false;
         self.showFull = true;
+        self.disableRightButton = true;
+        document.getElementById('id_symbol').removeAttribute('style');
     }
 
     function manualRefresh() {
@@ -406,11 +410,15 @@ function autoCompleteController($timeout, $q, $log) {
             self.showPrgIndicator = false;
             self.showPrgHighStock = false;
             self.showPrgNews = false;
+            self.disableRightButton = true;
 
             self.showErrorStockDetails = false;
             self.showErrorIndicator = false;
             self.showErrorHighStock = false;
             self.showErrorNews = false;
+            self.showProgress = true;
+            self.disableRightButton = false;
+
             self.aIndicatorData = {};
             self.aNewsArr = [];
             aTimeSeries = [];
@@ -433,6 +441,7 @@ function autoCompleteController($timeout, $q, $log) {
                 self.showErrorIndicator = true;
                 self.showErrorHighStock = true;
                 self.showErrorNews = true;
+                self.showProgress = false;
             });
         }
     }
@@ -450,10 +459,10 @@ function autoCompleteController($timeout, $q, $log) {
     function searchTextChange(text) {
         //$log.info('Text changed to ' + text);
         if (text.trim() == ''&&!self.clearButtonpressed) {
-                $('#id_symbol').css('border-color', 'red !important');
+           // $('#id_symbol').css('border', 'solid 1.5px red !important;');
                 $("#id_validationlabel")[0].innerHTML = "Please enter a stock ticker symbol.";
                 self.showGetQuote = false;
-
+                document.getElementById('id_symbol').setAttribute('style', 'border: solid 0.45px red !important');
             }
         else {      
             $('#id_symbol').css('border-color', '');
@@ -463,6 +472,7 @@ function autoCompleteController($timeout, $q, $log) {
             } else {
                 self.showGetQuote = true;
             }           
+            document.getElementById('id_symbol').removeAttribute('style');
             self.clearButtonpressed = false;
             }   
     }
